@@ -96,8 +96,6 @@ class Graphics extends Texture {
         this.setupLoop();
     }
 
-    
-
     setupLoop() {
         setInterval(() => {
             this.setupCanvas();
@@ -144,7 +142,6 @@ class Colision {
 
     checkColision(type) {
         // Check if block is out of bonds or collides with another block based on Tetris shape
-        console.log(this.controlBlocks)
         if (this.controlBlocks.length != 0) {
             var response = this.controlBlocks.map((block) => {
                 var x = block[0]; var y = block[1];
@@ -184,7 +181,7 @@ class Colision {
 class GameObject extends Colision {
     constructor(x, y, block, game) {
         super();
-        this.x = x; this.y = y; this.previousX; this.previousY; this.block = block; this.game = game;
+        this.x = x; this.y = y; this.previousX; this.previousY; this.block = block; this.game = game; this.keyboardAttached = false; this.blockPlaced = false;
         this.CreateBlock();
     }
 
@@ -192,7 +189,7 @@ class GameObject extends Colision {
         // Create a block
         this.controlBlocks = this.game.setmapGame(this.x, this.y, this.block);
         // this.checkColision(); On spawn fail colision game
-        this.setupKeyboard();
+        this.game.controls.setupEventKeyboard();
     }
 
     moveBlock(code) {
@@ -227,15 +224,12 @@ class GameObject extends Colision {
                 } else {
                     console.log("colision")
                 }
+            case "Space":
+                this.setBlock();
+                break;
         }
         this.game.setmapGame(this.previousX, this.previousY);
         this.controlBlocks = this.game.setmapGame(this.x, this.y, this.block);
-    }
-
-    setupKeyboard() {
-        window.addEventListener("keydown", function (e) {
-            this.moveBlock(e.code)
-        }.bind(this));
     }
 
     _rotate() {
@@ -244,9 +238,19 @@ class GameObject extends Colision {
 
     loop() {
         // Move block down and check colision
-        this.x++;
-        this.checkColision();
+        if (this.checkColision("down")) {
+            this.x++;
+        } else {
+            this.setBlock();
+        }
     }
+    setBlock() {
+        // Set block in place
+        window.removeEventListener("keydown", this.setupKeyboard);
+        this.game.setmapGame(this.x, this.y, this.block);
+        this.game.nextblock();
+    }
+
     kill() {}
 }
 
@@ -254,8 +258,24 @@ class Game extends Graphics {
     constructor() {
         super();
         this.mapGame = [];
+        this.controls = new Controls();
         this.setupMapGame();
-        this.actualblock = new GameObject(1, 4, 3, this);
+        this.blockloop();
+    }
+
+    blockloop() {
+        setInterval(() => {
+            if (!this.actualBlock) {
+                this.nextblock();
+            } else {
+                this.actualBlock.loop();
+            }
+        }, 1000 / this.textures.settings.speed);
+    }
+
+    nextblock() {
+        var block = Math.floor(Math.random() * this.textures.blocks.length);
+        this.actualBlock = new GameObject(0, 4, block, this);
     }
 
     setmapGame(x, y, block) {
@@ -289,6 +309,26 @@ class Game extends Graphics {
             for (var j = 0; j < this.textures.settings.columns; j++) {
                 this.mapGame[i][j] = 0;
             }
+        }
+    }
+}
+
+class Controls extends Game {
+    constructor() {
+        super();
+    }
+    setupEventKeyboard() {
+        const currentBlock = this.actualBlock;
+        if (!currentBlock.keyboardAttached && !currentBlock.blockPlaced) {
+            window.addEventListener("keydown", (e) => {
+                currentBlock.moveBlock(e.code);
+            });
+            currentBlock.keyboardAttached = true;
+        } else {
+            window.removeEventListener("keydown", (e) => {
+                currentBlock.moveBlock(e.code);
+            });
+            currentBlock.keyboardAttached = false;
         }
     }
 }
