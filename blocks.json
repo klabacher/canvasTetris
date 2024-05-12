@@ -1,0 +1,76 @@
+{
+    "settings": {
+      "rows": 20,
+      "columns": 10,
+      "speed": 500,
+      "colors": {
+        "cyan": "#00ffff",
+        "blue": "#0000ff",
+        "orange": "#ffa500",
+        "yellow": "#ffff00",
+        "green": "#00ff00",
+        "purple": "#800080",
+        "red": "#ff0000"
+      },
+      "blockheightP": 5,
+      "blockwidthP": 5
+    },
+    "blocks": [
+      {
+        "name": "I",
+        "shape": [
+          [1, 1, 1, 1]
+        ],
+        "color": "cyan"
+      },
+      {
+        "name": "J",
+        "shape": [
+          [1, 0, 0],
+          [1, 1, 1]
+        ],
+        "color": "blue"
+      },
+      {
+        "name": "L",
+        "shape": [
+          [0, 0, 1],
+          [1, 1, 1]
+        ],
+        "color": "orange"
+      },
+      {
+        "name": "O",
+        "shape": [
+          [1, 1],
+          [1, 1]
+        ],
+        "color": "yellow"
+      },
+      {
+        "name": "S",
+        "shape": [
+          [0, 1, 1],
+          [1, 1, 0]
+        ],
+        "color": "green"
+      },
+      {
+        "name": "T",
+        "shape": [
+          [0, 1, 0],
+          [1, 1, 1]
+        ],
+        "color": "purple"
+      },
+      {
+        "name": "Z",
+        "shape": [
+          [1, 1, 0],
+          [0, 1, 1]
+        ],
+        "color": "red"
+      }
+    ]
+}
+  
